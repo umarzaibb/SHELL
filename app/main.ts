@@ -7,7 +7,7 @@ const rl = createInterface({
 
 // TODO: Uncomment the code below to pass the first stage
 
-let commands:String[]= ['echo', 'exit'];
+let commands:String[]= ['echo', 'exit', 'type'];
 
  async function askPrompt() {
 
