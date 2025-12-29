@@ -6,7 +6,18 @@ const rl = createInterface({
 });
 
 // TODO: Uncomment the code below to pass the first stage
-rl.question("$ ", (answer) => {
-  console.log(`${answer}: command not found`);
-  rl.close();
-});
+
+
+ async function askPrompt() {
+
+    let callback= (answer)=>{
+        console.log(`${answer}: command not found`);
+        askPrompt();
+    }
+   
+    return  rl.question('$ ', callback);
+
+ }
+
+ askPrompt();
+
