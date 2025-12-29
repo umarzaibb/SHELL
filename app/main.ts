@@ -27,7 +27,7 @@ let commands:String[]= ['echo', 'exit', 'type'];
            if(commands.includes(curr_command)) {
             console.log(`${curr_command} is a shell builtin`);
            } else{
-          console.log(`${answer}: command not found`);
+          console.log(`${curr_command}: command not found`);
         }
         }
         else{
