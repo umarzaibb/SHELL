@@ -12,6 +12,10 @@ const rl = createInterface({
 
     let callback= (answer)=>{
         console.log(`${answer}: command not found`);
+        if(answer==='exit') {
+          rl.close();
+          return;
+        }
         askPrompt();
     }
    
