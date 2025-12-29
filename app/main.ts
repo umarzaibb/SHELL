@@ -11,11 +11,17 @@ const rl = createInterface({
  async function askPrompt() {
 
     let callback= (answer)=>{
+
         if(answer==='exit') {
           rl.close();
           return;
         }
-        console.log(`${answer}: command not found`);
+
+        if(answer.indexOf('echo')===0) {
+          console.log(answer.slice(5));
+        }else{
+          console.log(`${answer}: command not found`);
+        }
         askPrompt();
     }
    
