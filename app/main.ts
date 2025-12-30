@@ -1,5 +1,6 @@
 import { createInterface } from "readline";
 import path from 'node:path';
+import { execPath } from "node:process";
 
 const rl = createInterface({
   input: process.stdin,
@@ -9,7 +10,7 @@ const rl = createInterface({
 // TODO: Uncomment the code below to pass the first stage
 
 let commands:String[]= ['echo', 'exit', 'type'];
-let curr_path= process.env.PATH;
+let curr_path= execPath;
 
  async function askPrompt() {
 
