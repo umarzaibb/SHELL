@@ -12,6 +12,7 @@ const rl = createInterface({
 
 let commands:String[]= ['echo', 'exit', 'type'];
 let curr_path= dirname(fileURLToPath(import.meta.url));
+console.log(curr_path);
 
  async function askPrompt() {
 
