@@ -39,10 +39,12 @@ let curr_path_directories= curr_path?.split(`${path.delimiter}`);
             }
             try {
 
-               await access(`${i}/${curr_command}`, constants.R_OK | constants.W_OK, (err)=>{})
-
-                  isExecutableExists=true;
+              let exist=await access(`${i}/${curr_command}`, constants.R_OK | constants.W_OK, (err)=>{})
+               
+              if(exist) {
+                isExecutableExists=true;
                console.log(`${curr_command} is ${i}/${curr_command}`);
+              }
                 
 
             } catch {
