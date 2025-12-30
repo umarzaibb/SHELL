@@ -12,7 +12,6 @@ const rl = createInterface({
 let commands:String[]= ['echo', 'exit', 'type'];
 let curr_path= process.env.PATH;
 let curr_path_directories= curr_path?.split(`${path.delimiter}`);
-console.log(curr_path_directories);
 
  async function askPrompt() {
 
