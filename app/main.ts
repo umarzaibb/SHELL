@@ -2,6 +2,16 @@ import { createInterface } from "readline";
 import { access, constants } from "fs";
 import path from 'node:path';
 
+async function checkIfFileIsExecutable(i:String, curr_command:String) {
+    try {
+    await access(`${i}/${curr_command}`, constants.X_OK);
+    console.log(`${curr_command} is executable in ${dir}`);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -37,19 +47,9 @@ let curr_path_directories= curr_path?.split(`${path.delimiter}`);
             if(isExecutableExists) {
               break;
             }
-            try {
+            
+            isExecutableExists=await checkIfFileIsExecutable(i,curr_command);
 
-              let exist=await access(`${i}/${curr_command}`, constants.R_OK | constants.W_OK, (err)=>{})
-               
-              if(exist) {
-                isExecutableExists=true;
-               console.log(`${curr_command} is ${i}/${curr_command}`);
-              }
-                
-
-            } catch {
-               
-            } 
            }
            
         
