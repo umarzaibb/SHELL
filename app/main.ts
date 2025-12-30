@@ -27,7 +27,6 @@ let curr_path_directories= curr_path?.split(`${path.delimiter}`);
         }
 
         else if(answer.indexOf('type')===0) {
-          console.log(process.env.PATH);
            let curr_command= answer.split(" ")[1];
            if(commands.includes(curr_command)) {
             console.log(`${curr_command} is a shell builtin`);
