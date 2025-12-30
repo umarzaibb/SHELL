@@ -12,7 +12,6 @@ const rl = createInterface({
 
 let commands:String[]= ['echo', 'exit', 'type'];
 let curr_path= dirname(fileURLToPath(import.meta.url));
-console.log(curr_path);
 
  async function askPrompt() {
 
@@ -28,6 +27,7 @@ console.log(curr_path);
         }
 
         else if(answer.indexOf('type')===0) {
+          console.log(curr_path);
            let curr_command= answer.split(" ")[1];
            if(commands.includes(curr_command)) {
             console.log(`${curr_command} is a shell builtin`);
