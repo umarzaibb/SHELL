@@ -42,7 +42,7 @@ let curr_path_directories= curr_path?.split(`${path.delimiter}`);
 
                await access(`${i}/${curr_command}`, constants.R_OK | constants.W_OK);
                isExecutableExists=true;
-               console.log(`${curr_command} is ${curr_path}`);
+               console.log(`${curr_command} is ${i}/${curr_command}`);
             } catch {
                
             } 
