@@ -1,4 +1,5 @@
 import { createInterface } from "readline";
+import path from 'node:path';
 
 const rl = createInterface({
   input: process.stdin,
@@ -8,6 +9,7 @@ const rl = createInterface({
 // TODO: Uncomment the code below to pass the first stage
 
 let commands:String[]= ['echo', 'exit', 'type'];
+let curr_path= process.env.PATH;
 
  async function askPrompt() {
 
@@ -26,7 +28,11 @@ let commands:String[]= ['echo', 'exit', 'type'];
            let curr_command= answer.split(" ")[1];
            if(commands.includes(curr_command)) {
             console.log(`${curr_command} is a shell builtin`);
-           } else{
+           }
+           else if(curr_path?.includes(curr_command)) {
+            console.log(`${curr_command} is ${curr_command}`);
+           }
+            else{
           console.log(`${curr_command}: not found`);
         }
         }
