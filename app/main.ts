@@ -1,6 +1,7 @@
 import { createInterface } from "readline";
 import path from 'node:path';
-import { execPath } from "node:process";
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const rl = createInterface({
   input: process.stdin,
@@ -10,7 +11,7 @@ const rl = createInterface({
 // TODO: Uncomment the code below to pass the first stage
 
 let commands:String[]= ['echo', 'exit', 'type'];
-let curr_path= execPath;
+let curr_path= dirname(fileURLToPath(import.meta.url));
 
  async function askPrompt() {
 
