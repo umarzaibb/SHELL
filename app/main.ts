@@ -12,6 +12,7 @@ const rl = createInterface({
 let commands:String[]= ['echo', 'exit', 'type'];
 let curr_path= process.env.PATH;
 let curr_path_directories= curr_path?.split(`${path.delimiter}`);
+console.log(curr_path_directories);
 
  async function askPrompt() {
 
@@ -39,9 +40,12 @@ let curr_path_directories= curr_path?.split(`${path.delimiter}`);
             }
             try {
 
-               await access(`${i}/${curr_command}`, constants.R_OK | constants.W_OK);
-               isExecutableExists=true;
+               await access(`${i}/${curr_command}`, constants.R_OK | constants.W_OK, (err)=>{})
+
+                  isExecutableExists=true;
                console.log(`${curr_command} is ${i}/${curr_command}`);
+                
+
             } catch {
                
             } 
