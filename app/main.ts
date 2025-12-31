@@ -1,27 +1,28 @@
 import { createInterface } from "readline";
-import { access, constants } from "fs";
-import path from 'node:path';
-
-async function checkIfFileIsExecutable(i:String, curr_command:String) {
-    try {
-    await access(`${i}/${curr_command}`, constants.X_OK);
-    console.log(`${curr_command} is executable in ${dir}`);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
+import path from "node:path";
+import { access, constants } from 'node:fs/promises';
 
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
+async function checkIfFileIsAccessible(curr_dir:string, curr_command:string) {
+  
+  try {
+    await access(`${curr_dir}`, constants.X_OK);
+    console.log(`${curr_command} is ${curr_dir}`);
+    return true;
+  }catch(e) {
+    return false;
+  }
+
+}
+
 // TODO: Uncomment the code below to pass the first stage
 
 let commands:String[]= ['echo', 'exit', 'type'];
-let curr_path= process.env.PATH;
-let curr_path_directories= curr_path?.split(`${path.delimiter}`);
+let curr_path= process.env.PATH?.split(path.delimiter);
 
  async function askPrompt() {
 
@@ -41,19 +42,15 @@ let curr_path_directories= curr_path?.split(`${path.delimiter}`);
            if(commands.includes(curr_command)) {
             console.log(`${curr_command} is a shell builtin`);
            }
-           
-           let isExecutableExists=false;
-           for(let i of curr_path_directories) {
-            if(isExecutableExists) {
-              break;
-            }
-            
-            isExecutableExists=await checkIfFileIsExecutable(i,curr_command);
 
+           let isExecutable:boolean=false;
+
+           for(let i of curr_path) {
+                if(isExecutable) break;
+                isExecutable=await checkIfFileIsAccessible(`${i}/${curr_path}`, curr_command);
            }
            
-        
-           if(!commands.includes(curr_command) && !isExecutableExists) {
+          if(!isExecutable && !commands.includes(curr_command)) {
           console.log(`${curr_command}: not found`);
         }
         }
