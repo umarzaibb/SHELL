@@ -41,9 +41,8 @@ let curr_path= process.env.PATH?.split(path.delimiter);
            let curr_command= answer.split(" ")[1];
            if(commands.includes(curr_command)) {
             console.log(`${curr_command} is a shell builtin`);
-           }
-
-           let isExecutable:boolean=false;
+           }else{
+ let isExecutable:boolean=false;
 
            for(let i of curr_path) {
                 if(isExecutable) break;
@@ -53,6 +52,9 @@ let curr_path= process.env.PATH?.split(path.delimiter);
           if(!isExecutable && !commands.includes(curr_command)) {
           console.log(`${curr_command}: not found`);
         }
+           }
+
+      
         }
         else{
           console.log(`${answer}: command not found`);
