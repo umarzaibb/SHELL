@@ -47,7 +47,7 @@ let curr_path= process.env.PATH?.split(path.delimiter);
 
            for(let i of curr_path) {
                 if(isExecutable) break;
-                isExecutable=await checkIfFileIsAccessible(`${i}/${curr_path}`, curr_command);
+                isExecutable=await checkIfFileIsAccessible(path.join(i, curr_command), curr_command);
            }
            
           if(!isExecutable && !commands.includes(curr_command)) {
