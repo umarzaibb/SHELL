@@ -84,9 +84,10 @@ let curr_path= process.env.PATH?.split(path.delimiter);
             if(isExecuted) {
               let execFilePromise=utils.promisify(execFile);
               try {
-                 let result=await execFilePromise(curr_command, ...argument);
+                 let result=await execFilePromise(curr_command, argument);
                  console.log(result?.stdout);
-              break;
+                 break;
+
               }catch(e) {
 
               }
