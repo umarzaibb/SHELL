@@ -83,7 +83,7 @@ let curr_path= process.env.PATH?.split(path.delimiter);
             isExecuted=await checkIfFileIsAccessible_notPrint(path.join(i, curr_command), curr_command);
             if(isExecuted) {
               let execFilePromise=utils.promisify(execFile);
-              let result=await execFilePromise(path.join(i, curr_command));
+              let result=await execFilePromise(path.join(i, curr_command), argument);
               console.log(result?.stdout);
             }
            }
