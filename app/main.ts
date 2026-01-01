@@ -76,7 +76,7 @@ let curr_path= process.env.PATH?.split(path.delimiter);
         }
 
         else if(!commands.includes(curr_command)) {
-          let argument:String[]= answer.split(" ");
+          let argument:String[]= answer.split(" ").slice(1);
           let isExecuted;
            for(let i of curr_path) {
       
@@ -84,11 +84,11 @@ let curr_path= process.env.PATH?.split(path.delimiter);
             if(isExecuted) {
               let execFilePromise=utils.promisify(execFile);
               try {
-                 let result=await execFilePromise(...argument);
+                 let result=await execFilePromise(curr_command, ...argument);
                  console.log(result?.stdout);
               break;
               }catch(e) {
-                
+
               }
             
             }
