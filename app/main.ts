@@ -85,7 +85,7 @@ let curr_path= process.env.PATH?.split(path.delimiter);
               let execFilePromise=utils.promisify(execFile);
               try {
                  let result=await execFilePromise(curr_command, argument);
-                 console.log(result?.stdout);
+                 process.stdout.write(result?.stdout);
                  break;
 
               }catch(e) {
