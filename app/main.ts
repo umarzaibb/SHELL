@@ -54,48 +54,64 @@ let curr_path= process.env.PATH?.split(path.delimiter);
           console.log(answer.slice(5));
         }
 
-
+        //when type of ---start
         else if(answer.indexOf('type')===0) {
            let curr_command= answer.split(" ")[1];
-           if(commands.includes(curr_command)) {
-            console.log(`${curr_command} is a shell builtin`);
-           }else{
-            let isExecutable:boolean=false;
 
-           for(let i of curr_path) {
+            if(commands.includes(curr_command)) {
+              console.log(`${curr_command} is a shell builtin`);
+            }
+           
+            else{
+              let isExecutable:boolean=false;
+
+              for(let i of curr_path) {
                 if(isExecutable) break;
                 isExecutable=await checkIfFileIsAccessible(path.join(i, curr_command), curr_command);
-           }
+              }
            
-          if(!isExecutable && !commands.includes(curr_command)) {
-          console.log(`${curr_command}: not found`);
-        }
-           }
+               if(!isExecutable && !commands.includes(curr_command)) {
+               console.log(`${curr_command}: not found`);
+               }
 
-      
+            }
+             
         }
+        
+        //when you execute other files
 
         else if(!commands.includes(curr_command)) {
+
           let argument:String[]= answer.split(" ").slice(1);
           let isExecuted;
-           for(let i of curr_path) {
+
+          for(let i of curr_path) {
       
             isExecuted=await checkIfFileIsAccessible_notPrint(path.join(i, curr_command), curr_command);
+
             if(isExecuted) {
+
               let execFilePromise=utils.promisify(execFile);
+
               try {
+
                  let result=await execFilePromise(curr_command, argument);
                  process.stdout.write(result?.stdout);
                  break;
 
-              }catch(e) {
+              }
+              catch(e) {
 
               }
             
             }
-           }
+
+          }
+
            if(!isExecuted) {
-        console.log(`${curr_command}: command not found`);
+
+             console.log(`${curr_command}: command not found`);
+
            }
         }
         
