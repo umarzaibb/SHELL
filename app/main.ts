@@ -1,6 +1,8 @@
 import { createInterface } from "readline";
 import path from "node:path";
 import { access, constants } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import utils from 'util';
 
 const rl = createInterface({
   input: process.stdin,
@@ -19,7 +21,20 @@ async function checkIfFileIsAccessible(curr_dir:string, curr_command:string) {
 
 }
 
+async function checkIfFileIsAccessible_notPrint(curr_dir:string, curr_command:string) {
+  
+  try {
+    await access(`${curr_dir}`, constants.X_OK);
+    return true;
+  }catch(e) {
+    return false;
+  }
+
+}
+
+
 // TODO: Uncomment the code below to pass the first stage
+//CHILD_PROCESS IS USED TO RUN PROGRAMS WHILE fs IS USED FOR FILE HANDLING SUCH AS READ, WRITE
 
 let commands:String[]= ['echo', 'exit', 'type'];
 let curr_path= process.env.PATH?.split(path.delimiter);
@@ -27,6 +42,8 @@ let curr_path= process.env.PATH?.split(path.delimiter);
  async function askPrompt() {
 
     let callback= async(answer)=>{
+
+       let curr_command= answer.split(" ")[0];
 
         if(answer==='exit') {
           rl.close();
@@ -37,12 +54,13 @@ let curr_path= process.env.PATH?.split(path.delimiter);
           console.log(answer.slice(5));
         }
 
+
         else if(answer.indexOf('type')===0) {
            let curr_command= answer.split(" ")[1];
            if(commands.includes(curr_command)) {
             console.log(`${curr_command} is a shell builtin`);
            }else{
- let isExecutable:boolean=false;
+            let isExecutable:boolean=false;
 
            for(let i of curr_path) {
                 if(isExecutable) break;
@@ -56,9 +74,27 @@ let curr_path= process.env.PATH?.split(path.delimiter);
 
       
         }
-        else{
-          console.log(`${answer}: command not found`);
+
+        else if(!commands.includes(curr_command)) {
+          let argument= answer.split(" ").slice(1);
+          let isExecuted;
+           for(let i of curr_path) {
+      
+            isExecuted=await checkIfFileIsAccessible_notPrint(path.join(i, curr_command), curr_command);
+            if(isExecuted) {
+              let execFilePromise=utils.promisify(execFile);
+              let result=await execFilePromise(path.join(i, curr_command));
+              console.log(result?.stdout);
+            }
+           }
+           if(!isExecuted) {
+        console.log(`${curr_command}: command not found`);
+           }
         }
+        
+        // else if(){
+        //   console.log(`${answer}: command not found`);
+        // }
         askPrompt();
     }
    
