@@ -76,15 +76,21 @@ let curr_path= process.env.PATH?.split(path.delimiter);
         }
 
         else if(!commands.includes(curr_command)) {
-          let argument= answer.split(" ").slice(1);
+          let argument:String[]= answer.split(" ");
           let isExecuted;
            for(let i of curr_path) {
       
             isExecuted=await checkIfFileIsAccessible_notPrint(path.join(i, curr_command), curr_command);
             if(isExecuted) {
               let execFilePromise=utils.promisify(execFile);
-              let result=await execFilePromise(path.join(i, curr_command), argument);
-              console.log(result?.stdout);
+              try {
+                 let result=await execFilePromise(...argument);
+                 console.log(result?.stdout);
+              break;
+              }catch(e) {
+                
+              }
+            
             }
            }
            if(!isExecuted) {
