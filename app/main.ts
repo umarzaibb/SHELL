@@ -65,7 +65,6 @@ let curr_path= process.env.PATH?.split(path.delimiter);
 
             try {
               process.chdir(argv);
-              console.log('changed');
             }
             catch (err) {
               console.log(`cd: ${argv}: No such file or directory`)
