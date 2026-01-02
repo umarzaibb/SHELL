@@ -61,7 +61,17 @@ let curr_path= process.env.PATH?.split(path.delimiter);
         else if(answer.indexOf('cd')===0) {
           
           let argv= answer.split(' ')[1];
-          if(path.isAbsolute(argv)) {
+
+          if(argv=='~' && answer.split(' ').length==2) {
+            try {
+              process.chdir(process.env.HOME);
+            }
+            catch (err) {
+            
+            }
+          }
+
+          else if(path.isAbsolute(argv)) {
 
             try {
               process.chdir(argv);
@@ -70,7 +80,9 @@ let curr_path= process.env.PATH?.split(path.delimiter);
               console.log(`cd: ${argv}: No such file or directory`)
             }
 
-          }else if(!path.isAbsolute(argv)) {   
+          }
+
+          else if(!path.isAbsolute(argv)) {   
 
              try {
               process.chdir(argv);
