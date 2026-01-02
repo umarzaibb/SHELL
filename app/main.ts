@@ -69,6 +69,16 @@ let curr_path= process.env.PATH?.split(path.delimiter);
             catch (err) {
               console.log(`cd: ${argv}: No such file or directory`)
             }
+
+          }else if(!path.isAbsolute(argv)) {   
+
+             try {
+              process.chdir(argv);
+            }
+            catch (err) {
+              console.log(`cd: ${argv}: No such file or directory`)
+            }
+
           }
 
         }
