@@ -36,7 +36,7 @@ async function checkIfFileIsAccessible_notPrint(curr_dir:string, curr_command:st
 // TODO: Uncomment the code below to pass the first stage
 //CHILD_PROCESS IS USED TO RUN PROGRAMS WHILE fs IS USED FOR FILE HANDLING SUCH AS READ, WRITE
 
-let commands:String[]= ['echo', 'exit', 'type', 'pwd'];
+let commands:String[]= ['echo', 'exit', 'type', 'pwd', 'cd'];
 let curr_path= process.env.PATH?.split(path.delimiter);
 
  async function askPrompt() {
@@ -56,6 +56,22 @@ let curr_path= process.env.PATH?.split(path.delimiter);
 
         else if(answer.indexOf('pwd')===0 && answer.length===3) {
           console.log(process.cwd());
+        }
+
+        else if(answer.indexOf('cd')===0) {
+          
+          let argv= answer.split(' ')[1];
+          if(path.isAbsolute(argv)) {
+
+            try {
+              process.chdir(argv);
+              console.log('changed');
+            }
+            catch (err) {
+              console.log(`cd: ${argv}: No such file or directory`)
+            }
+          }
+
         }
 
         //when type of ---start
