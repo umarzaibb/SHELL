@@ -36,21 +36,29 @@ function getArguments(str:string) {
   const result = [];
   let current = '';
   let inSingleQuote = false;
+  let isDoubleQuote= false;
 
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
 
-    if (char === "'") {
+    if (char === "'" && !isDoubleQuote) {
       inSingleQuote = !inSingleQuote; // toggle quote state
       continue; // do not include quote
     }
 
-    if (char === ' ' && !inSingleQuote) {
+    if( char ==='"' && !inSingleQuote) {
+      isDoubleQuote= !isDoubleQuote;
+      continue;
+    }
+
+    if (char === ' ' && !inSingleQuote && !isDoubleQuote) {
       if (current.length > 0) {
         result.push(current);
         current = '';
       }
-    } else {
+    }
+    
+    else {
       current += char;
     }
   }
