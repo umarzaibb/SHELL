@@ -32,6 +32,38 @@ async function checkIfFileIsAccessible_notPrint(curr_dir:string, curr_command:st
 
 }
 
+function getArguments(str:string) {
+  const result = [];
+  let current = '';
+  let inSingleQuote = false;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+
+    if (char === "'") {
+      inSingleQuote = !inSingleQuote; // toggle quote state
+      continue; // do not include quote
+    }
+
+    if (char === ' ' && !inSingleQuote) {
+      if (current.length > 0) {
+        result.push(current);
+        current = '';
+      }
+    } else {
+      current += char;
+    }
+  }
+
+  if (current.length > 0) {
+    result.push(current);
+  }
+
+  return result;
+}
+
+
+
 
 // TODO: Uncomment the code below to pass the first stage
 //CHILD_PROCESS IS USED TO RUN PROGRAMS WHILE fs IS USED FOR FILE HANDLING SUCH AS READ, WRITE
@@ -51,7 +83,8 @@ let curr_path= process.env.PATH?.split(path.delimiter);
         }
 
         if(answer.indexOf('echo')===0) {
-          console.log(answer.slice(5));
+          let argv= getArguments(answer.replace('echo', ''));
+          console.log(...argv);
         }
 
         else if(answer.indexOf('pwd')===0 && answer.length===3) {
@@ -123,7 +156,7 @@ let curr_path= process.env.PATH?.split(path.delimiter);
 
         else if(!commands.includes(curr_command)) {
 
-          let argument:String[]= answer.split(" ").slice(1);
+          let argument:String[]= getArguments(answer.replace(curr_command, ''));
           let isExecuted;
 
           for(let i of curr_path) {
