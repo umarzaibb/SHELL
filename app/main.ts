@@ -37,6 +37,7 @@ function getArguments(str: string) {
   let inSingleQuote = false;
   let isDoubleQuote = false;
   let toStoreEscapeSequence = "";
+  let special_char_double_quote_escape=['\\', '"' ];
 
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
@@ -55,6 +56,14 @@ function getArguments(str: string) {
       current += str[i + 1];
       i++; // skip next character
       continue;
+    }
+
+    if (char === "\\" && !inSingleQuote ) {
+     if(special_char_double_quote_escape.indexOf(str[i+1])!=-1) {
+        current += str[i + 1];
+      i++; // skip next character
+      continue;
+     }
     }
 
     if (char === " " && !inSingleQuote && !isDoubleQuote) {
