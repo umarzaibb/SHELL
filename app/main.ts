@@ -41,10 +41,6 @@ function getArguments(str:string) {
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
     
-    if(char==='\\') {
-       backslash_Count+=1;
-       console.log(backslash_Count)
-    }
 
     if (char === "'" && !isDoubleQuote) {
       inSingleQuote = !inSingleQuote; // toggle quote state
