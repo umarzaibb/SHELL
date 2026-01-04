@@ -73,18 +73,18 @@ function getArguments(str:string) {
       //       };
       //    }
       // }
-       if(char==='/' && str[i+1]===' ' ) {
+       if(char==='\\' && str[i+1]===' ' ) {
         current+=' ';
          i++;
         
-      }else if(char==='/' && ((str[i+1].charCodeAt(0)>=65 && str[i+1].charCodeAt(0)<=90) || (str[i+1].charCodeAt(0)>=97 && str[i+1].charCodeAt(0)<=122   ))) {
+      }else if(char==='\\' && ((str[i+1].charCodeAt(0)>=65 && str[i+1].charCodeAt(0)<=90) || (str[i+1].charCodeAt(0)>=97 && str[i+1].charCodeAt(0)<=122   ))) {
           
       }
-      else if (char==="/" && str[i+1]==="/" ) {
-        current+='/';
+      else if (char==="\\" && str[i+1]==="\\" ) {
+        current+='\\';
         i++;
       }
-      else if(char==="/" && str[i+1]==="'" ) {
+      else if(char==="\\" && str[i+1]==="'" ) {
         current+="'";
         i++;
       }
