@@ -61,22 +61,22 @@ function getArguments(str:string) {
     
     else {
       // if three or more backslash
-      if(char==="/" && str[i+1]==="/" && str[i+2]==="/" ) {
-         for(let j=i; j<str.length ;j++) {
-          if(str[j]==='/') {
-           current+=' ';
-            i++;
-          }
-          else{
-            i--;
-            break;
-            };
-         }
-      }else if(char==='/' && str[i+1]===' ' ) {
+      // if(char==="/" && str[i+1]==="/" && str[i+2]==="/" ) {
+      //    for(let j=i; j<str.length ;j++) {
+      //     if(str[j]==='/') {
+      //      current+=' ';
+      //       i++;
+      //     }
+      //     else{
+      //       i--;
+      //       break;
+      //       };
+      //    }
+      // }
+       if(char==='/' && str[i+1]===' ' ) {
         current+=' ';
-        if(str[i-1]===' ') {
          i++;
-        }
+        
       }else if(char==='/' && ((str[i+1].charCodeAt(0)>=65 && str[i+1].charCodeAt(0)<=90) || (str[i+1].charCodeAt(0)>=97 && str[i+1].charCodeAt(0)<=122   ))) {
           
       }
