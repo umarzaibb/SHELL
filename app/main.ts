@@ -36,7 +36,7 @@ function getArguments(str: string) {
   let current = "";
   let inSingleQuote = false;
   let isDoubleQuote = false;
-  let toStoreEscapeSequence='';
+  let toStoreEscapeSequence = "";
 
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
@@ -52,7 +52,7 @@ function getArguments(str: string) {
     }
 
     if (char === "\\" && !isDoubleQuote && !inSingleQuote) {
-      current+=str[i+1];
+      current += str[i + 1];
       i++; // skip next character
       continue;
     }
@@ -62,39 +62,8 @@ function getArguments(str: string) {
         result.push(current);
         current = "";
       }
-
     } else {
-      // if three or more backslash
-      // if(char==="/" && str[i+1]==="/" && str[i+2]==="/" ) {
-      //    for(let j=i; j<str.length ;j++) {
-      //     if(str[j]==='/') {
-      //      current+=' ';
-      //       i++;
-      //     }
-      //     else{
-      //       i--;
-      //       break;
-      //       };
-      //    }
-      // }
-      //  if(char==='\\' && str[i+1]===' ' ) {
-      //   current+=' ';
-      //    i++;
-
-      // }else if(char==='\\' && ((str[i+1].charCodeAt(0)>=65 && str[i+1].charCodeAt(0)<=90) || (str[i+1].charCodeAt(0)>=97 && str[i+1].charCodeAt(0)<=122   ))) {
-
-      // }
-      // else if (char==="\\" && str[i+1]==="\\" ) {
-      //   current+='/';
-      //   i++;
-      // }
-      // else if(char==="/" && str[i+1]==="'" ) {
-      //   current+="'";
-      //   i++;
-      // }
-      //  else {
       current += char;
-      // }
     }
   }
 
