@@ -91,7 +91,7 @@ let curr_path = process.env.PATH?.split(path.delimiter);
 
 async function askPrompt() {
   let callback = async (answer) => {
-    let curr_command = answer.split(" ")[0];
+    let curr_command = getArguments(answer)[0];
 
     if (answer === "exit") {
       rl.close();
