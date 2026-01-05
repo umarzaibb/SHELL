@@ -32,8 +32,8 @@ async function checkIfFileIsAccessible_notPrint(
   curr_command: string
 ) {
   try {
-    await access(`${curr_dir}`, constants.X_OK);
-    return true;
+     await access(`${curr_dir}`, constants.X_OK);
+     return true;
   } catch (e) {
     return false;
   }
@@ -204,12 +204,20 @@ async function askPrompt() {
 
     //when you execute other files
     else if (!commands.includes(curr_command)) {
-      let argument: String[] = getArguments(answer.replace(curr_command, ""));
-      let isExecuted;
+        const removeList = [curr_command, "1>", ">", isRedirectStdout_path];
+      let argvProp=answer;
+      for (const item of removeList) {
+  argvProp = argvProp.replace(item, "");
+}
+      let argument = getArguments(argvProp);
 
-      for (let i of curr_path) {
+      // let argument: String[] = getArguments(answer.replace(curr_command, ""));
+      let isExecuted;
+      let result;
+
+      for (let i=0; i<=curr_path?.length-1 ;i++) {
         isExecuted = await checkIfFileIsAccessible_notPrint(
-          path.join(i, curr_command),
+          path.join(curr_path[i], curr_command),
           curr_command
         );
 
@@ -217,24 +225,28 @@ async function askPrompt() {
           let execFilePromise = utils.promisify(execFile);
 
           try {
-            let result = await execFilePromise(curr_command, argument);
+             result = await execFilePromise(curr_command, argument);
+
             if(isRedirectStdout) {
                file_execution_output= result?.stdout;
                writeFile(isRedirectStdout_path, file_execution_output);
                isRedirectStdout=false;
             }
             else{ 
-              if(curr_command==='cat') {
-              console.log(result?.stdout);
-              }
-              process.stdout.write(result?.stdout);
+             if(result?.stdout)  process.stdout.write(result?.stdout);
+            //  else process.stdout.write(result.stderr);
             }
             break;
-          } catch (e) { }
+          } catch (e) { 
+          }
+        }else {
+          if(curr_command==='cat' && !result?.stdout && i===curr_path?.length-1) {
+            console.log(`cat: ${argument}: No such file or directory`);
+          }
         }
       }
 
-      if (!isExecuted && !isRedirectStdout) {
+      if (!isExecuted && result?.stderr && !isRedirectStdout) {
         console.log(`${curr_command}: command not found`);
       }
     }
