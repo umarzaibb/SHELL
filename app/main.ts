@@ -233,7 +233,8 @@ async function askPrompt() {
                isRedirectStdout=false;
             }
             else{ 
-             if(result?.stdout)  process.stdout.write(result?.stdout);
+              if(curr_command=='cat') console.log(result.stdout);
+              else if(result?.stdout)  process.stdout.write(result?.stdout);
             //  else process.stdout.write(result.stderr);
             }
             break;
