@@ -3,6 +3,7 @@ import path from "node:path";
 import { access, constants } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import utils from "util";
+import fs from 'node:fs';
 
 const rl = createInterface({
   input: process.stdin,
@@ -83,6 +84,15 @@ function getArguments(str: string) {
   return result;
 }
 
+function writeFile(file_name:string ,content: string) {
+  try {
+  fs.writeFileSync(file_name, content);
+  // file written successfully
+} catch (err) {
+  console.error(err);
+}
+}
+
 // TODO: Uncomment the code below to pass the first stage
 //CHILD_PROCESS IS USED TO RUN PROGRAMS WHILE fs IS USED FOR FILE HANDLING SUCH AS READ, WRITE
 
@@ -92,6 +102,14 @@ let curr_path = process.env.PATH?.split(path.delimiter);
 async function askPrompt() {
   let callback = async (answer) => {
     let curr_command = getArguments(answer)[0];
+    let file_execution_output='';
+    let isRedirectStdout=false;
+    let isRedirectStdout_path='';
+    if(answer.indexOf('1>') !=-1 || answer.indexOf('>') !=-1)  {
+      isRedirectStdout=true;
+      let argv= getArguments(answer);
+      isRedirectStdout_path= argv[argv.length-1];
+    }
 
     if (answer === "exit") {
       rl.close();
@@ -99,10 +117,28 @@ async function askPrompt() {
     }
 
     if (answer.indexOf("echo") === 0) {
-      let argv = getArguments(answer.replace("echo", ""));
-      console.log(...argv);
+      const removeList = ["echo", "1>", ">", isRedirectStdout_path];
+      let argvProp=answer;
+      for (const item of removeList) {
+  argvProp = argvProp.replace(item, "");
+}
+      let argv = getArguments(argvProp);
+
+      if(isRedirectStdout){ for( let i of argv) {
+         file_execution_output+=i;
+      }
+      writeFile(isRedirectStdout_path, file_execution_output);
+    }
+      else{
+        console.log(...argv);
+      }
+
     } else if (answer.indexOf("pwd") === 0 && answer.length === 3) {
-      console.log(process.cwd());
+      if(isRedirectStdout) {
+         file_execution_output=process.cwd();
+         writeFile(isRedirectStdout_path, file_execution_output);
+      }
+      else console.log(process.cwd());
     } else if (answer.indexOf("cd") === 0) {
       let argv = answer.split(" ")[1];
 
@@ -130,8 +166,13 @@ async function askPrompt() {
       let curr_command = answer.split(" ")[1];
 
       if (commands.includes(curr_command)) {
-        console.log(`${curr_command} is a shell builtin`);
-      } else {
+        if(isRedirectStdout) { 
+          file_execution_output=`${curr_command} is a shell builtin`;
+          writeFile(isRedirectStdout_path, file_execution_output);
+        }
+        else console.log(`${curr_command} is a shell builtin`);
+      }
+       else {
         let isExecutable: boolean = false;
 
         for (let i of curr_path) {
@@ -164,7 +205,11 @@ async function askPrompt() {
 
           try {
             let result = await execFilePromise(curr_command, argument);
-            process.stdout.write(result?.stdout);
+            if(isRedirectStdout) {
+               file_execution_output= result?.stdout;
+               writeFile(isRedirectStdout_path, file_execution_output);
+            }
+            else process.stdout.write(result?.stdout);
             break;
           } catch (e) {}
         }
