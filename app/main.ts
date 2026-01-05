@@ -10,10 +10,17 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-async function checkIfFileIsAccessible(curr_dir: string, curr_command: string) {
+async function checkIfFileIsAccessible(curr_dir: string, curr_command: string, isRedirectStdout:boolean,
+  isRedirectStdout_path:string, file_execution_output: string
+) {
   try {
     await access(`${curr_dir}`, constants.X_OK);
-    console.log(`${curr_command} is ${curr_dir}`);
+     if(isRedirectStdout){
+      file_execution_output=`${curr_command} is ${curr_dir}`;
+       writeFile(isRedirectStdout_path, file_execution_output);
+       isRedirectStdout=false;
+     }
+     else console.log(`${curr_command} is ${curr_dir}`);
     return true;
   } catch (e) {
     return false;
@@ -128,6 +135,7 @@ async function askPrompt() {
          file_execution_output+=i;
       }
       writeFile(isRedirectStdout_path, file_execution_output);
+       isRedirectStdout=false;
     }
       else{
         console.log(...argv);
@@ -137,6 +145,7 @@ async function askPrompt() {
       if(isRedirectStdout) {
          file_execution_output=process.cwd();
          writeFile(isRedirectStdout_path, file_execution_output);
+          isRedirectStdout=false;
       }
       else console.log(process.cwd());
     } else if (answer.indexOf("cd") === 0) {
@@ -169,6 +178,7 @@ async function askPrompt() {
         if(isRedirectStdout) { 
           file_execution_output=`${curr_command} is a shell builtin`;
           writeFile(isRedirectStdout_path, file_execution_output);
+           isRedirectStdout=false;
         }
         else console.log(`${curr_command} is a shell builtin`);
       }
@@ -179,7 +189,10 @@ async function askPrompt() {
           if (isExecutable) break;
           isExecutable = await checkIfFileIsAccessible(
             path.join(i, curr_command),
-            curr_command
+            curr_command,
+            isRedirectStdout,
+            isRedirectStdout_path,
+            file_execution_output
           );
         }
 
@@ -208,10 +221,16 @@ async function askPrompt() {
             if(isRedirectStdout) {
                file_execution_output= result?.stdout;
                writeFile(isRedirectStdout_path, file_execution_output);
+               isRedirectStdout=false;
             }
-            else process.stdout.write(result?.stdout);
+            else{ 
+              if(curr_command==='cat') {
+              console.log(result?.stdout);
+              }
+              process.stdout.write(result?.stdout);
+            }
             break;
-          } catch (e) {}
+          } catch (e) { }
         }
       }
 
