@@ -150,13 +150,13 @@ async function askPrompt() {
         try {
           process.chdir(argv);
         } catch (err) {
-          console.log(`cd: ${argv}: No such file or directory`);
+         if(!isRedirectStdout) console.log(`cd: ${argv}: No such file or directory`);
         }
       } else if (!path.isAbsolute(argv)) {
         try {
           process.chdir(argv);
         } catch (err) {
-          console.log(`cd: ${argv}: No such file or directory`);
+         if(!isRedirectStdout) console.log(`cd: ${argv}: No such file or directory`);
         }
       }
     }
@@ -183,7 +183,7 @@ async function askPrompt() {
           );
         }
 
-        if (!isExecutable && !commands.includes(curr_command)) {
+        if (!isExecutable && !commands.includes(curr_command) && !isRedirectStdout) {
           console.log(`${curr_command}: not found`);
         }
       }
@@ -215,7 +215,7 @@ async function askPrompt() {
         }
       }
 
-      if (!isExecuted) {
+      if (!isExecuted && !isRedirectStdout) {
         console.log(`${curr_command}: command not found`);
       }
     }
