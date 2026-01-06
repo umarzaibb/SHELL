@@ -1,26 +1,29 @@
 import { createInterface } from "readline";
 import path from "node:path";
 import { access, constants } from "node:fs/promises";
-import { execFile } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import utils from "util";
-import fs from 'node:fs';
+import fs from "node:fs";
 
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-async function checkIfFileIsAccessible(curr_dir: string, curr_command: string, isRedirectStdout:boolean,
-  isRedirectStdout_path:string, file_execution_output: string
+async function checkIfFileIsAccessible(
+  curr_dir: string,
+  curr_command: string,
+  isRedirectStdout: boolean,
+  isRedirectStdout_path: string,
+  file_execution_output: string
 ) {
   try {
     await access(`${curr_dir}`, constants.X_OK);
-     if(isRedirectStdout){
-      file_execution_output=`${curr_command} is ${curr_dir}`;
-       writeFile(isRedirectStdout_path, file_execution_output);
-       isRedirectStdout=false;
-     }
-     else console.log(`${curr_command} is ${curr_dir}`);
+    if (isRedirectStdout) {
+      file_execution_output = `${curr_command} is ${curr_dir}`;
+      writeFile(isRedirectStdout_path, file_execution_output);
+      isRedirectStdout = false;
+    } else console.log(`${curr_command} is ${curr_dir}`);
     return true;
   } catch (e) {
     return false;
@@ -32,8 +35,8 @@ async function checkIfFileIsAccessible_notPrint(
   curr_command: string
 ) {
   try {
-     await access(`${curr_dir}`, constants.X_OK);
-     return true;
+    await access(`${curr_dir}`, constants.X_OK);
+    return true;
   } catch (e) {
     return false;
   }
@@ -45,7 +48,7 @@ function getArguments(str: string) {
   let inSingleQuote = false;
   let isDoubleQuote = false;
   let toStoreEscapeSequence = "";
-  let special_char_double_quote_escape=['\\', '"' ];
+  let special_char_double_quote_escape = ["\\", '"'];
 
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
@@ -66,12 +69,12 @@ function getArguments(str: string) {
       continue;
     }
 
-    if (char === "\\" && !inSingleQuote ) {
-     if(special_char_double_quote_escape.indexOf(str[i+1])!=-1) {
+    if (char === "\\" && !inSingleQuote) {
+      if (special_char_double_quote_escape.indexOf(str[i + 1]) != -1) {
         current += str[i + 1];
-      i++; // skip next character
-      continue;
-     }
+        i++; // skip next character
+        continue;
+      }
     }
 
     if (char === " " && !inSingleQuote && !isDoubleQuote) {
@@ -91,13 +94,13 @@ function getArguments(str: string) {
   return result;
 }
 
-function writeFile(file_name:string ,content: string) {
+function writeFile(file_name: string, content: string) {
   try {
-  fs.writeFileSync(file_name, content);
-  // file written successfully
-} catch (err) {
-  console.error(err);
-}
+    fs.writeFileSync(file_name, content);
+    // file written successfully
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 // TODO: Uncomment the code below to pass the first stage
@@ -109,13 +112,13 @@ let curr_path = process.env.PATH?.split(path.delimiter);
 async function askPrompt() {
   let callback = async (answer) => {
     let curr_command = getArguments(answer)[0];
-    let file_execution_output='';
-    let isRedirectStdout=false;
-    let isRedirectStdout_path='';
-    if(answer.indexOf('1>') !=-1 || answer.indexOf('>') !=-1)  {
-      isRedirectStdout=true;
-      let argv= getArguments(answer);
-      isRedirectStdout_path= argv[argv.length-1];
+    let file_execution_output = "";
+    let isRedirectStdout = false;
+    let isRedirectStdout_path = "";
+    if (answer.indexOf("1>") != -1 || answer.indexOf(">") != -1) {
+      isRedirectStdout = true;
+      let argv = getArguments(answer);
+      isRedirectStdout_path = argv[argv.length - 1];
     }
 
     if (answer === "exit") {
@@ -125,29 +128,27 @@ async function askPrompt() {
 
     if (answer.indexOf("echo") === 0) {
       const removeList = ["echo", "1>", ">", isRedirectStdout_path];
-      let argvProp=answer;
+      let argvProp = answer;
       for (const item of removeList) {
-  argvProp = argvProp.replace(item, "");
-}
+        argvProp = argvProp.replace(item, "");
+      }
       let argv = getArguments(argvProp);
 
-      if(isRedirectStdout){ for( let i of argv) {
-         file_execution_output+=i;
-      }
-      writeFile(isRedirectStdout_path, file_execution_output);
-       isRedirectStdout=false;
-    }
-      else{
+      if (isRedirectStdout) {
+        for (let i of argv) {
+          file_execution_output += i;
+        }
+        writeFile(isRedirectStdout_path, file_execution_output);
+        isRedirectStdout = false;
+      } else {
         console.log(...argv);
       }
-
     } else if (answer.indexOf("pwd") === 0 && answer.length === 3) {
-      if(isRedirectStdout) {
-         file_execution_output=process.cwd();
-         writeFile(isRedirectStdout_path, file_execution_output);
-          isRedirectStdout=false;
-      }
-      else console.log(process.cwd());
+      if (isRedirectStdout) {
+        file_execution_output = process.cwd();
+        writeFile(isRedirectStdout_path, file_execution_output);
+        isRedirectStdout = false;
+      } else console.log(process.cwd());
     } else if (answer.indexOf("cd") === 0) {
       let argv = answer.split(" ")[1];
 
@@ -159,13 +160,15 @@ async function askPrompt() {
         try {
           process.chdir(argv);
         } catch (err) {
-         if(!isRedirectStdout) console.log(`cd: ${argv}: No such file or directory`);
+          if (!isRedirectStdout)
+            console.log(`cd: ${argv}: No such file or directory`);
         }
       } else if (!path.isAbsolute(argv)) {
         try {
           process.chdir(argv);
         } catch (err) {
-         if(!isRedirectStdout) console.log(`cd: ${argv}: No such file or directory`);
+          if (!isRedirectStdout)
+            console.log(`cd: ${argv}: No such file or directory`);
         }
       }
     }
@@ -175,14 +178,12 @@ async function askPrompt() {
       let curr_command = answer.split(" ")[1];
 
       if (commands.includes(curr_command)) {
-        if(isRedirectStdout) { 
-          file_execution_output=`${curr_command} is a shell builtin`;
+        if (isRedirectStdout) {
+          file_execution_output = `${curr_command} is a shell builtin`;
           writeFile(isRedirectStdout_path, file_execution_output);
-           isRedirectStdout=false;
-        }
-        else console.log(`${curr_command} is a shell builtin`);
-      }
-       else {
+          isRedirectStdout = false;
+        } else console.log(`${curr_command} is a shell builtin`);
+      } else {
         let isExecutable: boolean = false;
 
         for (let i of curr_path) {
@@ -196,7 +197,11 @@ async function askPrompt() {
           );
         }
 
-        if (!isExecutable && !commands.includes(curr_command) && !isRedirectStdout) {
+        if (
+          !isExecutable &&
+          !commands.includes(curr_command) &&
+          !isRedirectStdout
+        ) {
           console.log(`${curr_command}: not found`);
         }
       }
@@ -204,50 +209,53 @@ async function askPrompt() {
 
     //when you execute other files
     else if (!commands.includes(curr_command)) {
-        const removeList = [curr_command, "1>", ">", isRedirectStdout_path];
-      let argvProp=answer;
+      const removeList = [curr_command, "1>", ">", isRedirectStdout_path];
+      let argvProp = answer;
       for (const item of removeList) {
-  argvProp = argvProp.replace(item, "");
-}
+        argvProp = argvProp.replace(item, "");
+      }
       let argument = getArguments(argvProp);
 
       // let argument: String[] = getArguments(answer.replace(curr_command, ""));
       let isExecuted;
       let result;
 
-      for (let i=0; i<=curr_path?.length-1 ;i++) {
+      for (let i = 0; i <= curr_path?.length - 1; i++) {
         isExecuted = await checkIfFileIsAccessible_notPrint(
           path.join(curr_path[i], curr_command),
           curr_command
         );
 
         if (isExecuted) {
-          let execFilePromise = utils.promisify(execFile);
+          // let execFilePromise = utils.promisify(spawn);
 
           try {
-             result = await execFilePromise(curr_command, argument);
+            result = spawnSync(curr_command, argument);
+            if(result.status===1) {
+              process.stdout.write(result.stderr.toString());
+            }
 
-            if(isRedirectStdout) {
-               file_execution_output= result?.stdout;
-               writeFile(isRedirectStdout_path, file_execution_output);
-               isRedirectStdout=false;
+            if (isRedirectStdout && result.stdout) {
+              file_execution_output = result.stdout;
+              writeFile(isRedirectStdout_path, file_execution_output);
+              isRedirectStdout = false;
+              break;
+            } else {
+              process.stdout.write(result.stdout);
+              console.log("");
+              break;
             }
-            else{ 
-              if(curr_command=='cat') console.log(result.stdout);
-              else if(result?.stdout)  process.stdout.write(result?.stdout);
-            //  else process.stdout.write(result.stderr);
-            }
-            break;
-          } catch (e) { 
-          }
-        }else {
-          if(curr_command==='cat' && !result?.stdout && i===curr_path?.length-1) {
-            console.log(`cat: ${argument}: No such file or directory`);
-          }
+
+
+            // if (result) {
+            //   break;
+            // }
+          } catch (e) {}
         }
       }
 
-      if (!isExecuted && result?.stderr && !isRedirectStdout) {
+
+      if (!isExecuted && !result?.stdout && !isRedirectStdout) {
         console.log(`${curr_command}: command not found`);
       }
     }
