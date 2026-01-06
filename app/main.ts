@@ -231,17 +231,21 @@ async function askPrompt() {
 
           try {
             result = spawnSync(curr_command, argument);
+
             if(result.status===1) {
-              process.stdout.write(result.stderr.toString());
+              process.stdout.write(result.stderr);
+              break;
             }
 
-            if (isRedirectStdout && result.stdout) {
+            // console.log(result);
+            if (isRedirectStdout ) {
               file_execution_output = result.stdout;
               writeFile(isRedirectStdout_path, file_execution_output);
               isRedirectStdout = false;
               break;
             } else {
-              process.stdout.write(result.stdout);
+              if(curr_command==='cat') console.log(result.stdout.toString());
+              else process.stdout.write(result.stdout);
               break;
             }
 
@@ -254,7 +258,7 @@ async function askPrompt() {
       }
 
 
-      if (!isExecuted && !result?.stdout && !isRedirectStdout) {
+      if (!isExecuted && !result && !isRedirectStdout) {
         console.log(`${curr_command}: command not found`);
       }
     }
