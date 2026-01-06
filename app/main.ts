@@ -239,7 +239,7 @@ async function askPrompt() {
 
             // console.log(result);
             if (isRedirectStdout ) {
-              file_execution_output = result.stdout;
+              file_execution_output = result.stdout.toString().trim();
               writeFile(isRedirectStdout_path, file_execution_output);
               isRedirectStdout = false;
               break;
