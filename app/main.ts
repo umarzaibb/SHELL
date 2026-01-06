@@ -242,7 +242,6 @@ async function askPrompt() {
               break;
             } else {
               process.stdout.write(result.stdout);
-              console.log("");
               break;
             }
 
